@@ -33,54 +33,48 @@ final class torus_utils_swiftTests: XCTestCase {
     
     override class func setUp() {
         super.setUp()
-//        let fnd = FetchNodeDetails()
-//        let nodeDetails = fnd.getNodeDetails()
-//        let nodeEndpoints = nodeDetails.getTorusNodeEndpoints()
-//        let nodePubkeys = nodeDetails.getTorusNodePub()
     }
     
     func testKeyLookup() {
-        let obj = TorusUtils()
+        let torusUtils = TorusUtils()
         
-        let exp1 = XCTestExpectation(description: "Do keylookup with success")
-        let keyLookupSuccess = obj.keyLookup(endpoints: nodeList, verifier: self.verifier, verifierId: self.verifierId)
-        keyLookupSuccess.done { data in
-            XCTAssert(data["address"]=="0x5533572d0b2b69Ae31bfDeA351B67B1C05F724Bc", "Address verified")
-            exp1.fulfill()
-        }.catch{err in
-            print(err)
-            XCTFail()
+        let exp1 = XCTestExpectation(description: "When doing keylookup with valid arguments, expect correct address to be returned")
+        let prom1 = torusUtils.keyLookup(endpoints: self.nodeList, verifier: self.verifier, verifierId: self.verifierId)
+        prom1.done { data in
+            XCTAssert(data["address"] == "0x093660013C413D781B33FEDd4C9f190e385807Af")
+        }.catch{ err in
+            XCTFail(err.localizedDescription)
+        }.finally {
             exp1.fulfill()
         }
         
-        let exp2 = XCTestExpectation(description: "Do keylookup with failure")
-        let keyLookupFailure = obj.keyLookup(endpoints: nodeList, verifier: self.verifier, verifierId: self.verifierId + "someRandomString")
-        keyLookupFailure.done { data in
-            XCTAssert(data["err"]=="keyLookupfailed", "error verified")
-            exp2.fulfill()
-        }.catch{err in
-            print("keylookup failed", err)
-            XCTFail()
+        let exp2 = XCTestExpectation(description: "When doing keylookup with invalid arguments, expect it to fail")
+        let prom2 = torusUtils.keyLookup(endpoints: self.nodeList, verifier: self.verifier, verifierId: self.verifierId + "<some random string>")
+        prom2.done { data in
+            XCTAssert(data["err"] == "keyLookupfailed")
+        }.catch{ err in
+            XCTFail(err.localizedDescription)
+        }.finally {
             exp2.fulfill()
         }
-    
+        
         wait(for: [exp1, exp2], timeout: 5)
     }
     
     func testKeyAssign(){
-        let exp1 = XCTestExpectation(description: "Do keyAssign success")
-        let obj = TorusUtils(nodePubKeys: nodePubKeys)
-        let keyAssign = obj.keyAssign(endpoints: self.nodeList, torusNodePubs: nodePubKeys, verifier: verifier, verifierId: self.verifierId)
-        keyAssign.done{ data in
-            // print(data)
+        let torusUtils = TorusUtils(nodePubKeys: nodePubKeys)
+
+        let exp = XCTestExpectation(description: "When doing keyAssign with valid arguments, expect non-nil result to be returned")
+        let prom = torusUtils.keyAssign(endpoints: self.nodeList, torusNodePubs: self.nodePubKeys, verifier: self.verifier, verifierId: self.verifierId)
+        prom.done{ data in
             XCTAssertNotNil(data)
-            exp1.fulfill()
         }.catch{ err in
-            print("keyAssign failed", err)
-            XCTFail()
-            exp1.fulfill()
+            XCTFail(err.localizedDescription)
+        }.finally {
+            exp.fulfill()
         }
-        wait(for: [exp1], timeout: 5)
+        
+        wait(for: [exp], timeout: 5)
     }
     
     func testGetPublicAddress(){
@@ -168,8 +162,6 @@ final class torus_utils_swiftTests: XCTestCase {
     
     func testSECPLib(){
         let secp256k1N = BigInt("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", radix: 16)!;
-
-        
         let privkey1 = "60a9a56b271e94cc2e8b52107fcb7c4698e7e2d0a4525a797dbe2330a074fdf6"
         let privkey2 = "f730f0a92f8d2b97bc7a1937afad3d2bb47f41418d697de8001797472225ee94"
         let privkey1Data = Data(hex: privkey1)
