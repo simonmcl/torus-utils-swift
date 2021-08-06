@@ -113,6 +113,8 @@ extension TorusUtils {
     
     // MARK:- retreiveDecryptAndReconstuct
     func retrieveDecryptAndReconstruct(endpoints : Array<String>, extraParams: Data, verifier: String, tokenCommitment:String, nodeSignatures: [[String:String]], verifierId: String, lookupPubkeyX: String, lookupPubkeyY: String, privateKey: String) -> Promise<(String, String, String)>{
+        let (promise, seal) = Promise<(String, String, String)>.pending()
+
         // Rebuild extraParams
         var rpcdata : Data = Data.init()
         do {
@@ -128,7 +130,8 @@ extension TorusUtils {
                 rpcdata = try JSONSerialization.data(withJSONObject: dataForRequest)
             }
         } catch {
-            self.logger.error("retrieveDecryptAndReconstruct - error:", error)
+            seal.reject(error)
+            return promise
         }
         
         // Build promises array
@@ -139,7 +142,6 @@ extension TorusUtils {
         }
         
         // Return promise
-        let (promise, seal) = Promise<(String, String, String)>.pending()
         var globalCount = 0
         var shareResponses = Array<[String:String]?>.init(repeating: nil, count: requestPromises.count)
         var resultArray = [Int:[String:String]]()
@@ -289,6 +291,8 @@ extension TorusUtils {
     
     // MARK:- retrieve each node shares
     func retrieveIndividualNodeShare(endpoints : Array<String>, extraParams: Data, verifier: String, tokenCommitment:String, nodeSignatures: [[String:String]], verifierId: String) -> Promise<[Int:[String:String]]>{
+        let (promise, seal) = Promise<[Int:[String:String]]>.pending()
+
         // Rebuild extraParams
         var rpcdata : Data = Data.init()
         do {
@@ -306,7 +310,8 @@ extension TorusUtils {
                 rpcdata = try JSONSerialization.data(withJSONObject: dataForRequest)
             }
         } catch {
-            self.logger.error("retrieveIndividualNodeShare - error:", error)
+            seal.reject(error)
+            return promise
         }
         
         // Build promises array
@@ -316,7 +321,6 @@ extension TorusUtils {
             requestPromises.append(URLSession.shared.uploadTask(.promise, with: rq, from: rpcdata))
         }
         
-        let (promise, seal) = Promise<[Int:[String:String]]>.pending()
         var shareResponses = Array<[String:String]?>.init(repeating: nil, count: requestPromises.count)
         var resultArray = [Int:[String:String]]()
         for (i, rq) in requestPromises.enumerated(){
