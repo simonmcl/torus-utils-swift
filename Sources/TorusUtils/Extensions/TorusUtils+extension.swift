@@ -15,8 +15,7 @@ import PMKFoundation
 import secp256k1
 #endif
 import BigInt
-import CryptoSwift
-import web3swift
+import web3
 
 extension TorusUtils {
     
