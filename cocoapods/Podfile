@@ -6,14 +6,21 @@ target 'TestApplication' do
 #  pod 'Torus-fetchNodeDetails', :git=>'https://github.com/torusresearch/fetch-node-details-swift'
   pod "Torus-utils",  :path => '../'
   # Pods for TestApplication
+
+  pod 'OHHTTPStubs/Swift'
+  pod 'SWHttpTrafficRecorder'
+  pod 'Bagel', '~>  1.4.0'
+
   
   target 'TestApplicationTests' do
     # Pods for testing
   end
   
   post_install do |installer|
-    installer.pods_project.build_configurations.each do |config|
-      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+            config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
+        end
     end
   end
 
