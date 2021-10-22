@@ -23,25 +23,20 @@ public class TorusUtils: AbstractTorusUtils{
     
 	var session: URLSession
 	
-	public init(nodePubKeys: Array<TorusNodePub>, session: URLSession = URLSession.shared, loglevel: OSLogType = .default){
+	public init(nodePubKeys: Array<TorusNodePub>, session: URLSession = URLSession.shared, loglevel: OSLogType = .default) {
         self.nodePubKeys = nodePubKeys
 		self.session = session
 		utilsLogType = loglevel
     }
         
     // set pubkeys later
-    public convenience init(){
-        self.init(nodePubKeys: [] )
+    public convenience init(session: URLSession = URLSession.shared) {
+		self.init(nodePubKeys: [], session: session)
     }
-    
     
     public func setTorusNodePubKeys(nodePubKeys: Array<TorusNodePub>){
         self.nodePubKeys = nodePubKeys
     }
-    
-//    public func setEndpoints(endpoints: Array<String>){
-//        self.endpoints = endpoints
-//    }
     
     public func getPublicAddress(endpoints : Array<String>, torusNodePubs : Array<TorusNodePub>, verifier : String, verifierId : String, isExtended: Bool) -> Promise<[String:String]>{
         let (promise, seal) = Promise<[String:String]>.pending()

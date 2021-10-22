@@ -33,7 +33,7 @@
         "repositoryURL": "https://github.com/simonmcl/fetch-node-details-swift",
         "state": {
           "branch": "mocking",
-          "revision": "a06b65918f7806bb5d1d44089e9351f8ac8e465c",
+          "revision": "15807285e199dd0517ed967f9f328b8900880b5a",
           "version": null
         }
       },
@@ -62,15 +62,6 @@
           "branch": null,
           "revision": "846998c28d5c024137b61b8d788e2e7d21b16d08",
           "version": "4.2.5"
-        }
-      },
-      {
-        "package": "PromiseKit",
-        "repositoryURL": "https://github.com/mxcl/PromiseKit.git",
-        "state": {
-          "branch": null,
-          "revision": "2ff97931d2721ecae9f94d8cbf4cf853a7d79180",
-          "version": "6.16.0"
         }
       },
       {
