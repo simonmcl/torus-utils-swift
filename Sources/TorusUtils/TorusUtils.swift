@@ -23,14 +23,14 @@ public class TorusUtils: AbstractTorusUtils{
     
 	var session: URLSession
 	
-	public init(nodePubKeys: Array<TorusNodePub>, session: URLSession = URLSession.shared, loglevel: OSLogType = .default) {
+	public init(nodePubKeys: Array<TorusNodePub>, session: URLSession, loglevel: OSLogType = .default) {
         self.nodePubKeys = nodePubKeys
 		self.session = session
 		utilsLogType = loglevel
     }
         
     // set pubkeys later
-    public convenience init(session: URLSession = URLSession.shared) {
+    public convenience init(session: URLSession) {
 		self.init(nodePubKeys: [], session: session)
     }
     
